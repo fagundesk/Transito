@@ -1,0 +1,419 @@
+////////// Main
+
+SET ThousandSep='.';
+SET DecimalSep=',';
+SET MoneyThousandSep='.';
+SET MoneyDecimalSep=',';
+SET MoneyFormat='R$#.##0,00;-R$#.##0,00';
+SET TimeFormat='hh:mm:ss';
+SET DateFormat='dd/MM/YYYY';
+SET TimestampFormat='dd/MM/YYYY h:mm:ss[.fff]';
+SET FirstWeekDay=6;
+SET BrokenWeeks=1;
+SET ReferenceDay=0;
+SET FirstMonthOfYear=1;
+SET CollationLocale='pt-BR';
+SET CreateSearchIndexOnReload=1;
+SET MonthNames='JAN;FEV;MAR;ABR;MAI;JUN;JUL;AGO;SET;OUT;NOV;DEZ';
+SET LongMonthNames='Janeiro;Fevereiro;Março;Abril;Maio;Junho;Julho;Agosto;Setembro;Outubro;Novembro;Dezembro';
+SET DayNames='seg;ter;qua;qui;sex;sáb;dom';
+SET LongDayNames='segunda-feira;terça-feira;quarta-feira;quinta-feira;sexta-feira;sábado;domingo';
+SET NumericalAbbreviation='3:mil;6:Mi;9:Bi;12:Tri;15:P;18:E;21:Z;24:Y;-3:m;-6:μ;-9:n;-12:p;-15:f;-18:a;-21:z;-24:y';
+
+LET UltimaAtualizacao = Date(Now())&' '&TIME(now(),'hh:mm');
+
+RetiraAcentos:
+Mapping Load * Inline [
+F1, F2,
+Á, A
+Ã, A
+Õ, O
+Ç, C
+É, E
+Ê, E
+é, E
+ê, E
+á, A
+ã, A
+Ú, U
+ú, U
+Ó, O
+ó, O
+Â, A
+Í, I
+Ô, O
+õ, O
+];
+////////// GTA
+GTADTA:
+Load *,
+    Chave_Item																		as Chave_GTA_Fronteira,
+    Chave_Item																		as Chave_GTA_Vacina; 
+LOAD 
+	AutoNumberHash128(trim(text("GtaID")))											as Chave_Item,
+    GtaID																			as GTADTAID,
+    "Tipo Documento Nome"															as "Tipo de Documeto",
+    "Código da GTA",
+    "Número do Documento",
+    "Série do Documento",
+     "Número do Documento"&'-'&"Série do Documento"									as "Documento Nº",
+    "Situacao GTA ID",
+    "Situacao GTA Nome",
+    "ID do Grupo do Produto",
+    "Nome do Grupo do Produto",
+    "ID da Finalidade",
+    "Nome da Finalidade",
+    "Total de Animais Machos",
+    "Total de Animais Fêmeas",
+    "Total de Animais sem Sexo",
+    "Total de Animais",
+    "Origem IE/CPF/CNPJ do Estabelecimento",
+    "Origem IDNaPGA",
+     AutoNumberHash128(Trim(text("Origem IE/CPF/CNPJ do Estabelecimento")))			as ChavePropriedade,
+    "Tipo Origem",
+    "Origem Nome do Estabelecimento",
+    "Origem Nome do Estabelecimento"&'-'&"Origem IE/CPF/CNPJ do Estabelecimento"	as "Propriedade-IE Origem",
+    "Origem CPF/CNPJ da Pessoa",
+    "Origem Nome da Pessoa",
+    "Origem ID do Município",
+    Origem_Nome_do_Município 													as "Município Origem",
+    "Origem UF do Município"													as "UF do Município Origem",
+    "Origem ID da Região",
+    "Origem Nome da Região",
+    "Origem ID Região de Maior Risco",
+    "Origem ID ZAV",
+    "Origem ZAV Nome",
+    "Origem Averbação",
+    "Origem Lista Trace",
+    "Origem Exportação para Rússia",
+    "Origem ID do Tipo de Evento",
+    "Origem Nome do Tipo de Evento",
+    "Origem Nome do Evento",
+    "Origem Data Início do Evento",
+    "Origem Data Término do Evento",
+    "Origem ID da Pessoa Promotor do Evento",
+    "Origem ID do Nome Pessoa Promotor Evento",
+    "Origem ID do Colaborador do Evento",
+    "Origem ID do Nome do Colaborador do Evento",
+    "Origem ID do Local do Evento",
+    "Origem Nome do Local do Evento",
+    "Origem ID do Município do Evento",
+    "Origem Nome do Município do Evento",
+    "Origem UF do Município do Evento",
+    "Origem ID da Propriedade Núcleo",
+    "Origem IE/CPF/CNPJ da Propriedade Núcleo",
+    "Origem Nome da Propriedade Núcleo",
+    "Origem ID do Produto Núcleo",
+    "Origem Nome do Produto Núcleo",
+    "Origem ID Integradora do Núcleo",
+    "Origem IE/CPF/CNPJ Integradora do Núcleo",
+    "Origem Nome da Integradora do Núcleo",
+    "Origem ID de Acesso ao Mercado",
+    "Origem Nome de Acesso ao Mercado",
+    "Origem Quantidade de Galpôes do Núcleo",
+    "Destino ID Tipo Propriedade",
+    "Destino Nome Tipo de Propriedade",
+    "Destino IE/CPF/CNPJ do Estabelecimento",
+    "Destino Nome do Estabelecimento",
+	"Tipo Destino",
+    "Destino IDNaPGA",
+    "Destino Nome do Estabelecimento"&'-'&"Destino IE/CPF/CNPJ do Estabelecimento"	as "Propriedade-IE Destino",
+    "Destino CPF/CNPJ da Pessoa",
+    "Destino Nome da Pessoa",
+    "Destino ID do Município",
+    Destino_Nome_do_Município														as "Município Destino",
+    "Destino UF do Município"														as "UF do Município Destino",
+    "Destino ID da Região",
+    "Destino Nome da Região",
+    "Destino ID Região de Maior Risco",
+    "Destino ID ZAV",
+    "Destino ZAV Nome",
+    "Destino Número da Certificação",
+    "Destino ID Tipo de Serviço de Inspeção",
+    "Destino Nome de Serviço de Inspeção",
+    "Destino ID da Propriedade Núcleo",
+    "Destino IE/CPF/CNPJ da Propriedade Núcleo",
+    "Destino Nome da Propriedade Núcleo",
+    "Destino ID do Produto Núcleo",
+    "Destino Nome do Produto Núcleo",
+    "Destino ID Integradora do Núcleo",
+    "Destino IE/CPF/CNPJ Integradora do Núcleo",
+    "Destino Nome da Integradora do Núcleo",
+    "Destino Nome Destino",
+    "Destino ID Classificação do Núcleo",
+    "Destino Classificação do Núcleo"										as "Destino Nome Classificação do Núcleo",
+    "Destino ID de Acesso ao Mercado",
+    "Destino Nome de Acesso ao Mercado",
+    "Destino Quantidade de Galpôes do Núcleo",
+    "Destino Numero de Registro Núcleo",
+    "Destino Data de Validade do Registrog",
+    "Destino ID Aglomeração",
+    "Destino ID Aglomeração Evento",
+    "Destino ID do Tipo de Evento",
+    "Destino Nome do Tipo de Evento",
+    "Destino Nome do Evento",
+    "Destino Data Início do Evento",
+    "Destino Data Término do Evento",
+    "Destino ID da Pessoa Promotor do Evento",
+    "Destino ID do Nome Pessoa Promotor Evento",
+    "Destino ID do Colaborador do Evento",
+    "Destino ID do Nome do Colaborador do Evento",
+    "Destino ID do Local do Evento",
+    "Destino Nome do Local do Evento",
+    "Destino ID do Município do Evento",
+    "Destino Nome do Município do Evento",
+    "Destino UF do Município do Evento",
+    "ID do Destinatario",
+    "IE/CPF/CNPJ do Destinatario",
+    "Nome do Destinario",
+    "ID do Municipio Destinatario",
+    "Nome do Municipio Destinatario",
+    "UF do Destinatario-Municipio",
+    "ID da Origem do Transito-Municipio",
+    "Nome da Origem do Transito-Municipio",
+    "UF da Origem do Transito do Municipio",
+    "ID do Destino do Transito do Municipio",
+    "Nome do Destino do Transito do Municipio",
+    "UF do Destino do Transito do Municipio",
+    "ID da Unidade do IAGRO",
+    "Nome da Unidade do IAGRO",
+    "ID da Pessoa Emitente",
+    "CPF/CNPJ da Pessoa Emitente",
+    "Nome da Pessoa Emitente",
+    "ID do Cargo da Pessoa Emitente",
+    "Nome do Cargo da Pessoa Emitente",
+    "Matricula da Pessoa Emitente",
+    "Meios de Transporte",
+	Date(Floor("Data Emissão"))					as  "Data Emissão",
+    "Horário Emissão",
+    "Data do Cadastro",
+    "Data da Alteração",
+    "Data Cancelamento",
+    "Horário Cancelamento",
+    ProdutoID,
+    Espécie,
+    "Código de Barras Ministério",
+    "Código de Barras Digitalização",
+    TipoGTAID,
+    "Descrição do tipo do GTA "						as "Tipo de GTA",
+    "Tipo Incentivo ID",
+	"Tipo Incentivo Nome",
+    "Tipo do Lancamento",
+    "Origem-IE/CPF/CNPJ",
+    "Destino-IE/CPF/CNPJ",
+    "Município Origem-Destino",
+    "Município Destino Fora MS",
+    "Município Destino de MS",
+    "UF Destino de MS",
+    "UF Destino Fora MS",
+    "Município Origem Fora MS",
+    "Município Origem de MS",
+    "UF Origem de MS",
+    "UF Origem Fora MS",
+    "Dia Emissão"								as Dia,
+    "Ano Emissão"								as Ano,
+    "Mês Emissão"								as Mês,
+     "Mês Emissão"&'/'&"Ano Emissão"			as "Mês/Ano",
+    "Trimestre Emissão"							as Trimestre,
+    "Hora/Minuto Emissão"						as "Hora/Minuto",
+    "Hora Emissão"								as "Hora Emissão",
+    "Situação Confirmação",
+    "Município Origem de MS Destino Fora MS",
+    "Município Fora MS Destino de MS",
+    "Município Origem e Destino de MS"
+FROM [lib://PASTA/Transformados/GTADTA/GTADTA.qvd]
+(qvd) where "Situacao GTA Nome" = 'ATIVO';
+
+// NoConcatenate
+
+// GTADTA:
+// Load * Resident GTADTA_TMP;
+// drop table GTADTA_TMP;
+// Left Join(GTADTA)
+// LOAD
+// 	DocNumero&'-'&DocSerie
+//     &num(Date(SubField(DataEmissao,' ', 1), 'dd/MM/yyyy'))	as Chave_GTADTA,
+//     TipoIncentivoID 										as "Tipo Incentivo ID",
+//     TipoIncentivoNome 										as "Tipo Incentivo Nome"
+// FROM [lib://PASTA/Extraidos/GTADTA/GTADTA_20*.qvd]
+// (qvd);
+
+
+Fronteira:
+LOAD
+    AutoNumberHash128(trim(text("GtaID")))						as Chave_GTA_Fronteira,
+    "Fronteira.Origem IE/CPF/CNPJ do Estabelecimento",
+    "Fronteira.Origem Nome do Estabelecimento",
+    "Fronteira.Origem CPF/CNPJ da Pessoa",
+    "Fronteira.Origem Nome da Pessoa",
+    "Fronteira.Origem ID do Município",
+    Fronteira.Origem_Nome_do_Município,
+    "Fronteira.Origem UF do Município",
+    "Fronteira.Destino IE/CPF/CNPJ do Estabelecimento",
+    "Fronteira.Destino Nome do Estabelecimento",
+    "Fronteira.Destino CPF/CNPJ da Pessoa",
+    "Fronteira.Destino Nome da Pessoa",
+    "Fronteira.Destino ID do Município",
+    Fronteira.Destino_Nome_do_Município,
+    "Fronteira.Destino UF do Município",
+    "Fronteira.Destino ID da Região",
+    "Fronteira.Destino Nome da Região",
+    "Fronteira.Destino ID Região de Maior Risco",
+    "Fronteira.Destino ID ZAV",
+    "Fronteira.Destino ZAV Nome",
+    "Fronteira.Destino Número da Certificação",
+    Fronteira.TabelaFronteira
+FROM [lib://PASTA/Transformados/GTADTA/GTAFronteira.qvd]
+(qvd) where Exists(Chave_GTA_Fronteira,AutoNumberHash128(trim(text("GtaID"))));
+
+
+GTADTAItem:
+LOAD
+   "GTADTAItem.GTADTAItemID",
+   AutoNumberHash128(trim(text("GtaID")))			as Chave_Item,
+//    "GTADTAItem.ID do Produto",
+    "GTADTAItem.Nome do Produto"					as "Espécie Item",
+//     GTADTAItem.ProdutoComercialID,
+    "GTADTAItem.Nome Comercial do Produto"			as "Espécie/Faixa Etária",
+   SubField("GTADTAItem.Nome Comercial do Produto"
+   ,SubField("GTADTAItem.Nome Comercial do Produto",' ',1)&' ',2) as "Faixa Etaria",
+//     GTADTAItem.ApresentacaoComercialID,
+//    "GTADTAItem.Codigo Comercial da Apresentação",
+   "GTADTAItem.Descrição Comercial/Apresentação"	as "Faixa Etária",
+//    GTADTAItem.TipoSexoID,
+    MapSubString('RetiraAcentos',"GTADTAItem.Nome Sexo")							as Sexo,
+//    "GTADTAItem.Codigo do PGA",
+//    "GTADTAItem.Evolução",
+   "GTADTAItem.Quantidade"							as Quantidade
+FROM [lib://PASTA/Transformados/GTADTA/GTADTAItem.qvd]
+(qvd) where Exists(Chave_Item,AutoNumberHash128(trim(text("GtaID"))));
+
+////////// KML
+// ORIGENS
+
+KML_Origem:
+LOAD
+    "Origem ID do Município",
+    "Cidade de Origem"
+FROM [lib://PASTA/Transformados/KML/KML_Origem.qvd]
+(qvd);
+
+
+KML_Destino:
+LOAD
+    "Destino ID do Município",
+    "Cidade de Destino"
+FROM [lib://PASTA/Transformados/KML/KML_Destino.qvd]
+(qvd);
+
+
+LocalizacaoMunicipiosOrigemPoligonos:
+LOAD
+   	[Município Nome] 				as "Município Origem",
+	[Município Área Geográfica]		as [Município Origem Área Geográfica]
+FROM [lib://PASTA/Transformados/NovilhoPrecoce/Municipios_MS_Poligonos.qvd]
+(qvd);
+
+LocalizacaoMunicipiosDestinoPoligonos:
+LOAD
+   	[Município Nome] 				as "Município Destino",
+	[Município Área Geográfica]		as [Município Destino Área Geográfica]
+FROM [lib://PASTA/Transformados/NovilhoPrecoce/Municipios_MS_Poligonos.qvd]
+(qvd);
+
+
+TAG FIELD "Cidade de Origem" WITH '$geopoint';
+TAG FIELD "Cidade de Destino" WITH '$geopoint';
+TAG FIELD [Município Origem Área Geográfica] WITH '$geopolygon';
+TAG FIELD [Município Destino Área Geográfica] WITH '$geopolygon';
+
+///////// Propriedade
+
+Propriedade:
+Load *,
+AutoNumberHash128(Trim(text("IE/CPF/CNPJ")))							as ChavePropriedade;
+LOAD
+    AutoNumberHash128(Trim(text("Ficha Sanitária ID")))					as Chave_Ficha,
+    "Ficha Sanitária ID",
+    text("Ficha Sanitária IECPFCNPJ")							 		as "IE/CPF/CNPJ",
+    "Ficha Sanitária Área Total"										as "Área Total",
+    "Ficha Sanitária Produtor Nome"										as Produtor,
+    "Ficha Sanitária Propriedade Nome"									as Propriedade,
+    "Ficha Sanitária Município" 										as Município,
+    "Ficha Sanitária ZAV"												as ZAV,
+    "Ficha Sanitária Condição Produtor"									as "Condição Produtor",
+    "Ficha Sanitária Tipo Propriedade"									as "Tipo Propriedade",
+    "Ficha Sanitária Tem Coordenada?"									as "Tem Coordenada?",
+    "Ficha Sanitária Latitude"											as Latitude,
+    "Ficha Sanitária Longitude"											as Longitude
+FROM [lib://PASTA/Transformados/PropriedadesFichasSanitarias/FichaSanitaria.qvd]
+(qvd) where Exists(ChavePropriedade,AutoNumberHash128(Trim(text("Ficha Sanitária IECPFCNPJ"))));
+
+////////// Saldos
+
+SaldoGeral:
+LOAD
+ 	AutoNumberHash128(Trim(text("Ficha Sanitária ID"&"Ano Saldo"&"Mes Saldo")))	as Chave_Ligacao_Saldo,
+    [Saldo Geral ID],
+    "Data Saldo",
+    "Dia Saldo",
+    "Mes Saldo"																	as "Mês Saldo",
+    "Ano Saldo",
+     AutoNumberHash128(Trim(text("Ficha Sanitária ID")))						as Chave_Ficha,
+    Bovino,
+    Bubalino,
+    Ovino,
+    Caprino,
+    Suino,
+    Equino,
+    Asinino,
+    Muar,
+    Aves,
+    Peixes,
+    Abelha,
+    "Total"
+FROM [lib://PASTA/Transformados/Saldos/SaldoGeral.qvd]
+(qvd) where "Ano Saldo" >= 2021 and Exists(Chave_Ficha, AutoNumberHash128(Trim(text("Ficha Sanitária ID"))));
+
+
+SaldoBovideos:
+LOAD
+	AutoNumberHash128(Trim(text("Ficha Sanitaria ID"&"Ano do Saldo"&"Mês do Saldo")))as Chave_Ligacao_Saldo,
+    "Saldo Bovideos ID",
+    "Data do Saldo",
+    "Ano do Saldo",
+    "Mês do Saldo",
+    "Origem Destino ID",
+//     "Ficha Sanitaria ID"						as  "Ficha Sanitária ID",
+    "Saldo Dia",
+//     "IE/CPF/CNPJ",
+//     "IE/CPF/CNPJ"							as "Origem IE/CPF/CNPJ do Estabelecimento",
+    "Produto ID",
+    Produto										as "Espécie Saldo",
+    "Femea 0 a 12 Mêses",
+    "Femea 13 a 24 Mêses",
+    "Femea 25 a 36 Mêses",
+    "Femea Acima 36 Mêses",
+    "Macho 0 a 12 Mêses",
+    "Macho 13 a 24 Mêses",
+    "Macho 25 a 36 Mêses",
+    "Macho Acima 36 Mêses",
+    "Saldo Confirmado",
+    "Saldo a Confirmar",
+    "Saldo Total",
+    "Saldo Identificado",
+    "Femea 0 a 12 Mêses Vacinado Brucelose",
+    Entrada,
+    Saida,
+    "Saldo a Retornar",
+    "Femea 0 a 12 Mêses Atestado Brucelose",
+    "Femea 0 a 12 Mêses Nascidas 6 Meses"
+FROM [lib://PASTA/Transformados/Saldos/SaldoBovideos_2022.qvd]
+(qvd) where Exists(Chave_Ligacao_Saldo, AutoNumberHash128(Trim(text("Ficha Sanitaria ID"&"Ano do Saldo"&"Mês do Saldo"))));
+
+
+Exit Script
+
+
+
+
